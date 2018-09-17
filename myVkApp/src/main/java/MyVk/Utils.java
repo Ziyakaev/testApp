@@ -21,18 +21,22 @@ import java.util.List;
 import java.util.Map;
 
 public class Utils
-{ public void request(String method, Map<String,String> map){
-    HttpPost request;
+{   HttpPost request;
+    public void request(String method, Map<String,String> map){
     RequestVkApi requestVkApi=new RequestVkApi();
     request=requestVkApi.requestPost(method);
-    List<NameValuePair> formparamsVk=new ArrayList<>();
-    for (Map.Entry<String,String> iter:map.entrySet()) {
-        formparamsVk.add(new BasicNameValuePair(iter.getKey(), iter.getValue()));
-    }
+    List<NameValuePair> formparamsVk=Utils.buildParameterForRequest(map);
     UrlEncodedFormEntity entity=new UrlEncodedFormEntity(formparamsVk, Consts.UTF_8);
     request.setEntity(entity);
     }
-    public String response( HttpResponse response,HttpClient client, HttpPost request){
+    public static List<NameValuePair>  buildParameterForRequest(Map<String,String> map){
+        List<NameValuePair> formparamsVk=new ArrayList<>();
+        for (Map.Entry<String,String> iter:map.entrySet()) {
+            formparamsVk.add(new BasicNameValuePair(iter.getKey(), iter.getValue()));
+        }
+        return formparamsVk;
+    }
+    public String response( HttpResponse response,HttpClient client){
         StringBuilder sp=new StringBuilder();
         try {
             response= client.execute(request);

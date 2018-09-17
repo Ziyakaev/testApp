@@ -66,7 +66,7 @@ public class Connection {
         request.abort();
         String email = "";
         String pass = "";
-        request = new HttpPost("https://oauth.vk.com/token?grant_type=password&client_id=3697615&client_secret=AlVXZFMUqyrnABp8ncuU&username=89518983937&password=1111&v=5.71&2fa_supported=1");
+        request = new HttpPost("https://oauth.vk.com/token?grant_type=password&client_id=3697615&client_secret=AlVXZFMUqyrnABp8ncuU&username=89518983937&password=qwe123Z&v=5.71&2fa_supported=1");
         try {
         response = client.execute(request);
 
