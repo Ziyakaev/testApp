@@ -88,3 +88,4 @@ hs_err_pid*
 .gitignore
 .idea/
 myVkApp/target/
+/myVkApp/myVkApp.iml
