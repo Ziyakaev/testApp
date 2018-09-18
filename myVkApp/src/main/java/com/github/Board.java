@@ -1,4 +1,4 @@
-package MyVk;
+package com.github;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -17,7 +17,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Board {
     BoardForTopic boardForTopic=new BoardForTopic();
@@ -85,4 +87,12 @@ public class Board {
          return groupId;
      }
  }
+    public static Map<String,String> setParameterForGroup(String groupId, String accessToken){
+        Map<String,String> map=new HashMap<>();
+        map.put("extended","1");
+        map.put("group_id",groupId);
+        map.put("access_token",accessToken);
+        map.put("v","5.80");
+        return map;
+    }
 }

@@ -1,4 +1,4 @@
-package MyVk;
+package com.github;
 
 public class Wall {
     String ownerId;

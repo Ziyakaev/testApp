@@ -1,4 +1,4 @@
-package MyVk;
+package com.github;
 
 import org.apache.http.Consts;
 import org.apache.http.HttpEntity;

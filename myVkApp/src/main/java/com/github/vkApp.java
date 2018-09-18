@@ -1,24 +1,9 @@
-package MyVk;
+package com.github;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import org.apache.http.Consts;
-import org.apache.http.HttpEntity;
+import dto.Group;
 import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONObject;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 public class vkApp {
     public static void main(String[] args) {
@@ -30,41 +15,20 @@ public class vkApp {
         Utils utils=new Utils();
         utils.request("groups.get",Groups.setParameterForGroup(Integer.toString(connection.userId),accessToken));
         System.out.println(utils.response(response,client));
-//        RequestVkApi requestVkApi=new RequestVkApi();
-//        request=requestVkApi.requestPost("groups.get");
-//        System.out.println("userId="+connection.userId);
-//        List<NameValuePair> formparamsVk=new ArrayList<NameValuePair>();
-//        formparamsVk.add(new BasicNameValuePair("extended","1"));
-//        formparamsVk.add(new BasicNameValuePair("user_id",Integer.toString(connection.userId)));
-//        formparamsVk.add(new BasicNameValuePair("access_token",accessToken));
-//        formparamsVk.add(new BasicNameValuePair("v","5.80"));
-//        UrlEncodedFormEntity entity=new UrlEncodedFormEntity(formparamsVk,Consts.UTF_8);
-//        request.setEntity(entity);
-//        request=new HttpPost("https://api.vk.com/method/groups.search?");
-//        formparamsVk.add(new BasicNameValuePair("q","Снять квартиру в Казани"));
-//        formparamsVk.add(new BasicNameValuePair("access_token",accessToken));
-//        formparamsVk.add(new BasicNameValuePair("v","5.71"));
-//        UrlEncodedFormEntity entity=new UrlEncodedFormEntity(formparamsVk, Consts.UTF_8);
-//        request.setEntity(entity);
-        JsonObject jsonObject1=null;
-        JSONObject jsonObject=null;
-        Gson jsonGroups=new Gson();
-        Groups groups=new Groups();
-        ResponseVk responseVk;
-//            try {
-//            response=client.execute(request);
-//        HttpEntity httpEntity=response.getEntity();
-//        InputStream inputStream=httpEntity.getContent();
-//            BufferedReader bufferedReader=new BufferedReader(new InputStreamReader(inputStream));
-//            String s; StringBuilder sp=new StringBuilder();
-//            while((s=bufferedReader.readLine())!=null){
-//                sp.append(s);
-//              System.out.println("callMethod"+s);
-//                jsonObject=new JSONObject(s).getJSONObject("response");
-//               groups.count=jsonObject.getInt("count");
-//               jsonArray=jsonObject.getJSONArray("items");
+        JsonHelper jsonHelper=new JsonHelper();
+        dto.Groups groups=jsonHelper.getJson(utils.response(response,client), dto.Groups.class);
 
-            }
+        DataGroups dataGroups=new DataGroups();
+        utils.delimetersForGroup(groups.getResponse().getItems(),dataGroups);
+        for(Group group:dataGroups.groupToOther) {
+            utils.request("board.getTopics", Board.setParameterForGroup(group.getId(), accessToken));
+            System.out.println(utils.response(response,client));
+        }
+
+//        for (int i=0;i<groups.getResponse().getItems().length;i++) {
+//            System.out.println(groups.getResponse().getItems()[i].getName());
+//        }
+         }
 //                System.out.println(sp.toString());
 //            responseVk=jsonGroups.fromJson(sp.toString(),ResponseVk.class);
 //            groups=responseVk.response;

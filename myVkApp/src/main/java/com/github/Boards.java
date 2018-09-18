@@ -1,4 +1,4 @@
-package MyVk;
+package com.github;
 
 import java.util.List;
 
