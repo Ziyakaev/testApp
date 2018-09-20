@@ -1,6 +1,7 @@
-package com.github;
+package com.github.ziyakaev;
 
-import dto.Group;
+import com.github.ziyakaev.dto.Board;
+import com.github.ziyakaev.dto.Group;
 import org.apache.http.Consts;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -8,6 +9,7 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 
 import java.io.BufferedReader;
@@ -19,8 +21,11 @@ import java.util.List;
 import java.util.Map;
 
 public class Utils {
-    HttpPost request;
+    private HttpPost request;
     private final HelperFilter helperFilter = new HelperFilter();
+    public final String messageTextToComment="Здесь НЕТ риэлторов и посредников, можно оставить объявление в этой группе и вступить) https://vk.com/kazan_home";
+
+
 
     public void request(String method, Map<String, String> map) {
         RequestVkApi requestVkApi = new RequestVkApi();
@@ -28,6 +33,7 @@ public class Utils {
         List<NameValuePair> formparamsVk = Utils.buildParameterForRequest(map);
         UrlEncodedFormEntity entity = new UrlEncodedFormEntity(formparamsVk, Consts.UTF_8);
         request.setEntity(entity);
+
     }
 
     public static List<NameValuePair> buildParameterForRequest(Map<String, String> map) {
@@ -38,10 +44,13 @@ public class Utils {
         return formparamsVk;
     }
 
-    public String response(HttpResponse response, HttpClient client) {
+    public String response(HttpClient client) {
         StringBuilder sp = new StringBuilder();
+        HttpClient client1 = HttpClientBuilder.create().build();
+        HttpResponse response;
         try {
-            response = client.execute(request);
+            response = client1.execute(request);
+            System.out.println(response.getStatusLine());
             HttpEntity httpEntity = response.getEntity();
             InputStream inputStream = httpEntity.getContent();
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
@@ -56,24 +65,52 @@ public class Utils {
         return sp.toString();
     }
 
-    public void delimetersForGroup(Group[] groups, DataGroups dataGroups) {
+    public void delimitersForGroup(Group[] groups, DataGroups dataGroups) {
         helperFilter.builderNameHouse();
         boolean f;
         for (Group group : groups) {
-            f=false;
+            f = false;
             for (String textFilter : helperFilter.nameHouse) {
                 if (group.getName().toUpperCase().contains(textFilter.toUpperCase())) {
                     f = true;
                 }
             }
             if (f) {
-                dataGroups.groupToHouse.add(group);
+                dataGroups.addGroupToHouse(group);
                 System.out.println(group.getName());
             } else {
-                dataGroups.groupToOther.add(group);
+                dataGroups.addGroupToOther(group);
             }
 
         }
     }
+    public  boolean searchToBoard(Board board){
+        boolean f=false;
+        for(String filter:helperFilter.nameHouse)
+        if (board.getTitle().toUpperCase().contains(filter.toUpperCase())){ f=true;
+        }
+        return f;
+
+    }
+    public  Board boadForGroupCollection(Board[] boards){
+        Board board=null;
+        for (int i=0;i<boards.length;i++){
+            if (this.searchToBoard(boards[i])){board=boards[i];
+            }
+        }
+        return board;
+    }
+    public void writeComments(String method,Map<String,String> map){
+        this.request(method,map);
+    }
+    public void sleep(int second) {
+        try {
+            Thread.sleep(second * 1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+
 
 }

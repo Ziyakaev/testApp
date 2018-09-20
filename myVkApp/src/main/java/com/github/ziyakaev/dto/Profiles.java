@@ -1,4 +1,5 @@
-package dto;
+package com.github.ziyakaev.dto;
+
 
 public class Profiles
 {

@@ -1,34 +1,51 @@
-package com.github;
+package com.github.ziyakaev;
 
-import dto.Group;
+import com.github.ziyakaev.dto.Boards;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 
-public class vkApp {
-    public static void main(String[] args) {
-        Connection connection=new Connection();
-        String accessToken=connection.getToken();
-        System.out.println("token="+accessToken);
+import java.util.ArrayList;
+import java.util.List;
+
+
+public class VkApp {
+    public static void main(String[] args)  {
+        Connection connection = new Connection();
+        String accessToken = connection.getToken();
+        System.out.println("token=" + accessToken);
         HttpResponse response = null;
-        HttpClient client= HttpClientBuilder.create().build();
-        Utils utils=new Utils();
-        utils.request("groups.get",Groups.setParameterForGroup(Integer.toString(connection.userId),accessToken));
-        System.out.println(utils.response(response,client));
-        JsonHelper jsonHelper=new JsonHelper();
-        dto.Groups groups=jsonHelper.getJson(utils.response(response,client), dto.Groups.class);
+        HttpClient client = HttpClientBuilder.create().build();
+        Utils utils = new Utils();
+        utils.request("groups.get", com.github.ziyakaev.Groups.setParameterForGroup(Integer.toString(connection.userId), accessToken));
+        System.out.println(utils.response(client));
+        JsonHelper jsonHelper = new JsonHelper();
+        com.github.ziyakaev.dto.Groups groups = (com.github.ziyakaev.dto.Groups) jsonHelper.getJson(utils.response(client), com.github.ziyakaev.dto.Groups.class);
+        DataGroups dataGroups = new DataGroups();
+        utils.delimitersForGroup(groups.getResponse().getItems(), dataGroups);
+        utils.request("board.getTopics", Board.setParameterForBoard("115111065", accessToken));
+        System.out.println(utils.response(client));
 
-        DataGroups dataGroups=new DataGroups();
-        utils.delimetersForGroup(groups.getResponse().getItems(),dataGroups);
-        for(Group group:dataGroups.groupToOther) {
-            utils.request("board.getTopics", Board.setParameterForGroup(group.getId(), accessToken));
-            System.out.println(utils.response(response,client));
+        List<Board> boardList = new ArrayList<>();
+        for (GroupVk group : dataGroups.groupToOther) {
+            utils.request("board.getTopics", Board.setParameterForBoard(group.getGroup().getId(), accessToken));
+            Boards boards = (Boards) jsonHelper.getJson(utils.response(client), Boards.class);
+            com.github.ziyakaev.dto.Board board=utils.boadForGroupCollection(boards.getResponse().getItems());
+            if (board!=null) { group.setBoards(board);
+                                group.isBoardEmpty=false;
+                            }
         }
-
+        for (GroupVk group : dataGroups.groupToOther) {
+           if (!group.isBoardEmpty) {
+               utils.writeComments("board.createComment", Board.setParameterForComments(group.getGroup().getId(), group.getBoards().getId(), utils.messageTextToComment, accessToken));
+               utils.response(client);
+                utils.sleep(5);
+            }
+        }
 //        for (int i=0;i<groups.getResponse().getItems().length;i++) {
 //            System.out.println(groups.getResponse().getItems()[i].getName());
 //        }
-         }
+    }
 //                System.out.println(sp.toString());
 //            responseVk=jsonGroups.fromJson(sp.toString(),ResponseVk.class);
 //            groups=responseVk.response;
@@ -114,7 +131,7 @@ public class vkApp {
 //            }
 
 //        }
-   //     System.out.println("group="+jsonArray.toString());
+    //     System.out.println("group="+jsonArray.toString());
 //        System.out.println("items"+groups.count);
 //    }
 }

@@ -1,6 +1,7 @@
-package com.github;
+package com.github.ziyakaev;
 
 import com.google.gson.annotations.SerializedName;
+
 public class ResponseVk {
     @SerializedName("response")
     Groups response;

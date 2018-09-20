@@ -1,17 +1,11 @@
-package com.github;
-
-import com.google.gson.annotations.SerializedName;
+package com.github.ziyakaev;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-public class Groups {
-    @SerializedName("count")
-    Integer count;
-    @SerializedName("items")
-    List<Group> items=new ArrayList<>();
+public class Groups extends com.github.ziyakaev.dto.Groups {
+   ArrayList<GroupVk> groups=new ArrayList<>();
     public Groups(){
 
     }
@@ -20,7 +14,7 @@ public class Groups {
         map.put("extended","1");
         map.put("user_id",userId);
         map.put("access_token",accessToken);
-        map.put("v","5.80");
+        map.put("v","5.85");
         return map;
     }
 
