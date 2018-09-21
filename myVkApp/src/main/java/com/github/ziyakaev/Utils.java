@@ -22,10 +22,13 @@ import java.util.Map;
 
 public class Utils {
     private HttpPost request;
+    private static int Random=(int) Math.random()%15+5;
     private final HelperFilter helperFilter = new HelperFilter();
     public final String messageTextToComment="Здесь НЕТ риэлторов и посредников, можно оставить объявление в этой группе и вступить) https://vk.com/kazan_home";
 
-
+    public static int getRandom() {
+        return Random;
+    }
 
     public void request(String method, Map<String, String> map) {
         RequestVkApi requestVkApi = new RequestVkApi();

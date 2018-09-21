@@ -35,12 +35,17 @@ public class VkApp {
                                 group.isBoardEmpty=false;
                             }
         }
-        for (GroupVk group : dataGroups.groupToOther) {
-           if (!group.isBoardEmpty) {
-               utils.writeComments("board.createComment", Board.setParameterForComments(group.getGroup().getId(), group.getBoards().getId(), utils.messageTextToComment, accessToken));
-               utils.response(client);
-                utils.sleep(5);
-            }
+//        for (GroupVk group : dataGroups.groupToOther) {
+//           if (!group.isBoardEmpty) {
+//               utils.writeComments("board.createComment", Board.setParameterForComments(group.getGroup().getId(), group.getBoards().getId(), utils.messageTextToComment, accessToken));
+//               utils.response(client);
+//                utils.sleep(Utils.getRandom());
+//            }
+//        }
+        for (GroupVk group:dataGroups.groupToHouse){
+            utils.request("wall.post",Wall.setParameterForWall(group.getGroup().getId(),utils.messageTextToComment,accessToken));
+            utils.response(client);
+            utils.sleep(Utils.getRandom());
         }
 //        for (int i=0;i<groups.getResponse().getItems().length;i++) {
 //            System.out.println(groups.getResponse().getItems()[i].getName());
