@@ -16,6 +16,7 @@ public class HelperFilter {
         nameHouse.add("комнат");
         nameHouse.add("одселени");
         nameHouse.add("arenda");
+        nameHouse.add("едвижимость");
     }
 
     public List<String> getNameHouse() {
