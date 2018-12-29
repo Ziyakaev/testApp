@@ -4,22 +4,29 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HelperFilter {
-    List<String>nameHouse=new ArrayList<>();
+    private List<String> keyWorldsForHouseGroup = new ArrayList<>();
 
-    public void setNameHouse() {
-        this.nameHouse = nameHouse;
-    }
-    public void builderNameHouse(){
-        nameHouse.add("сниму");
-        nameHouse.add("сдам");
-        nameHouse.add("вартир");
-        nameHouse.add("комнат");
-        nameHouse.add("одселени");
-        nameHouse.add("arenda");
-        nameHouse.add("едвижимость");
+    HelperFilter() {
+        keyWorldsForHouseGroup.add("сниму");
+        keyWorldsForHouseGroup.add("сдам");
+        keyWorldsForHouseGroup.add("вартир");
+        keyWorldsForHouseGroup.add("комнат");
+        keyWorldsForHouseGroup.add("одселени");
+        keyWorldsForHouseGroup.add("arenda");
+        keyWorldsForHouseGroup.add("едвижимость");
     }
 
-    public List<String> getNameHouse() {
-        return nameHouse;
+    public List<String> getKeyWorldsForHouseGroup() {
+        return keyWorldsForHouseGroup;
+    }
+
+    // TODO: 08.11.2018 добавить фильтрацию
+    public boolean DoFilter(String compareText) {
+        for (String filter :keyWorldsForHouseGroup) {
+            if (compareText.toUpperCase().contains(filter.toUpperCase())) {
+                return true;
+            }
+        }
+        return false;
     }
 }

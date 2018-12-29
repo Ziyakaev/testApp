@@ -11,26 +11,34 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 public class Utils {
-    private HttpPost request;
-    private static int Random=(int) Math.random()%15+5;
-    private final HelperFilter helperFilter = new HelperFilter();
-    public final String messageTextToComment="Здесь НЕТ риэлторов и посредников, можно оставить объявление в этой группе и вступить) https://vk.com/kazan_home";
+    private static HttpPost request;
+    private static int Random = (int) Math.random() % 15 + 5;
+    private static final HelperFilter helperFilter = new HelperFilter();
+    public static String accessToken;
+    private static final Logger logger = LogManager.getLogger("Utils");
+    public static final String messageTextToComment = "Здесь НЕТ риэлторов и посредников, можно оставить объявление в этой группе и вступить) https://vk.com/kazan_home";
 
     public static int getRandom() {
         return Random;
     }
 
-    public void request(String method, Map<String, String> map) {
+    public static void request(String method, Map<String, String> map) {
         RequestVkApi requestVkApi = new RequestVkApi();
         request = requestVkApi.requestPost(method);
         List<NameValuePair> formparamsVk = Utils.buildParameterForRequest(map);
@@ -47,20 +55,20 @@ public class Utils {
         return formparamsVk;
     }
 
-    public String response(HttpClient client) {
+    public static String response() {
         StringBuilder sp = new StringBuilder();
         HttpClient client1 = HttpClientBuilder.create().build();
         HttpResponse response;
         try {
             response = client1.execute(request);
-            System.out.println(response.getStatusLine());
+            logger.info("status line{}", response.getStatusLine());
             HttpEntity httpEntity = response.getEntity();
             InputStream inputStream = httpEntity.getContent();
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
             String s;
             while ((s = bufferedReader.readLine()) != null) {
                 sp.append(s);
-                System.out.println("response is" + s);
+                logger.info("response is{}", s);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -68,52 +76,68 @@ public class Utils {
         return sp.toString();
     }
 
-    public void delimitersForGroup(Group[] groups, DataGroups dataGroups) {
-        helperFilter.builderNameHouse();
-        boolean f;
+    public DataGroups delimitersForGroup(List<Group> groups) {
+        logger.info("delimitersForGroup --> {}", groups);
+        boolean isGroupForHouse;
+        DataGroups dataGroups = new DataGroups();
         for (Group group : groups) {
-            f = false;
-            for (String textFilter : helperFilter.nameHouse) {
-                if (group.getName().toUpperCase().contains(textFilter.toUpperCase())) {
-                    f = true;
-                }
+            isGroupForHouse = false;
+            if (helperFilter.DoFilter(group.getName().toUpperCase())) {
+                isGroupForHouse = true;
             }
-            if (f) {
+            if (isGroupForHouse) {
                 dataGroups.addGroupToHouse(group);
-                System.out.println(group.getName());
+                logger.info("group to house" + group.getName());
             } else {
                 dataGroups.addGroupToOther(group);
+                logger.info("group not house" + group.getName());
             }
 
         }
+        logger.info("delimitersForGroup <-- {}", dataGroups);
+        return dataGroups;
     }
-    public  boolean searchToBoard(Board board){
-        boolean f=false;
-        for(String filter:helperFilter.nameHouse)
-        if (board.getTitle().toUpperCase().contains(filter.toUpperCase())){ f=true;
-        }
+
+    public static boolean searchToBoard(Board board) {
+        boolean f = false;
+        for (String filter : helperFilter.getKeyWorldsForHouseGroup())
+            if (board.getTitle().toUpperCase().contains(filter.toUpperCase())) {
+                f = true;
+            }
         return f;
 
     }
-    public  Board boadForGroupCollection(Board[] boards){
-        Board board=null;
-        for (int i=0;i<boards.length;i++){
-            if (this.searchToBoard(boards[i])){board=boards[i];
+
+    public List<Board> boadForGroupCollection(List<Board> boards) {
+        List<Board> boardForComment = new ArrayList<>();
+        for (Board board : boards) {
+            if (Utils.searchToBoard(board)) {
+                boardForComment.add(board);
             }
         }
-        return board;
+        return boardForComment;
     }
-    public void writeComments(String method,Map<String,String> map){
-        this.request(method,map);
+
+    public static void writeComments(String method, Map<String, String> map) {
+        request(method, map);
     }
-    public void sleep(int second) {
+
+    public static void sleep(int second) {
         try {
             Thread.sleep(second * 1000);
         } catch (InterruptedException e) {
+
             e.printStackTrace();
         }
     }
 
+    public static List<String> readFile(String fileName) throws IOException {
+        Path path = Paths.get(fileName);
+        return Files.readAllLines(path);
+    }
 
+    public static List<String> split(String data) {
+        return Arrays.asList(data.split(","));
+    }
 
 }

@@ -1,23 +1,19 @@
 package com.github.ziyakaev.dto;
 
-public class Groups
-{
+public class Groups {
     private Response response;
 
-    public Response getResponse ()
-    {
+    public Response getResponse() {
         return response;
     }
 
-    public void setResponse (Response response)
-    {
+    public void setResponse(Response response) {
         this.response = response;
     }
 
     @Override
-    public String toString()
-    {
-        return "ClassPojo [response = "+response+"]";
+    public String toString() {
+        return "ClassPojo [response = " + response + "]";
     }
 }
 

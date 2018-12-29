@@ -1,34 +1,28 @@
 package com.github.ziyakaev.dto;
 
-public class Response
-{
+public class Response {
     private String count;
 
     private Group[] items;
 
-    public String getCount ()
-    {
+    public String getCount() {
         return count;
     }
 
-    public void setCount (String count)
-    {
+    public void setCount(String count) {
         this.count = count;
     }
 
-    public Group[] getItems ()
-    {
+    public Group[] getItems() {
         return items;
     }
 
-    public void setItems (Group[] items)
-    {
+    public void setItems(Group[] items) {
         this.items = items;
     }
 
     @Override
-    public String toString()
-    {
-        return "ClassPojo [count = "+count+", items = "+items+"]";
+    public String toString() {
+        return "ClassPojo [count = " + count + ", items = " + items + "]";
     }
 }
